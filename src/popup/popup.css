@@ -1,0 +1,128 @@
+:root {
+  --bg: #0e0e10;
+  --surface: #16161a;
+  --line: #232328;
+  --text: #e6e6ea;
+  --muted: #6e6e76;
+  --accent: #ffa116;
+  --easy: #00b8a3;
+  --medium: #ffa116;
+  --hard: #ff375f;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html,
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: "Source Code Pro", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 12px;
+  line-height: 1.5;
+  font-weight: 400;
+}
+
+body {
+  width: 320px;
+  padding: 0;
+}
+
+.popup {
+  display: flex;
+  flex-direction: column;
+}
+
+.popup__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 14px;
+  border-bottom: 1px solid var(--line);
+}
+
+.popup__brand {
+  font-weight: 600;
+  font-size: 13px;
+  letter-spacing: 0.04em;
+  color: var(--accent);
+}
+
+.popup__status {
+  font-size: 11px;
+  color: var(--muted);
+  text-transform: lowercase;
+}
+
+.popup__body {
+  display: flex;
+  flex-direction: column;
+  padding: 6px 14px;
+}
+
+.popup__row {
+  display: grid;
+  grid-template-columns: 78px 1fr;
+  gap: 10px;
+  align-items: baseline;
+  padding: 8px 0;
+  border-bottom: 1px dashed var(--line);
+}
+
+.popup__row:last-child {
+  border-bottom: none;
+}
+
+.popup__row--block {
+  grid-template-columns: 1fr;
+  gap: 6px;
+}
+
+.popup__label {
+  color: var(--muted);
+  font-size: 11px;
+  text-transform: lowercase;
+  letter-spacing: 0.03em;
+}
+
+.popup__value {
+  word-break: break-word;
+  font-size: 12px;
+}
+
+.popup__value--missing {
+  color: var(--muted);
+  font-style: italic;
+}
+
+.popup__value--easy { color: var(--easy); }
+.popup__value--medium { color: var(--medium); }
+.popup__value--hard { color: var(--hard); }
+
+.popup__tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.popup__tag {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  color: var(--text);
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-size: 11px;
+}
+
+.popup__footer {
+  padding: 10px 14px;
+  border-top: 1px solid var(--line);
+}
+
+.popup__hint {
+  color: var(--muted);
+  font-size: 11px;
+}

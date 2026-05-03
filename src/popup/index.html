@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>LeetCode Metadata Capture</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Source+Code+Pro:wght@400;500;600&display=swap"
+    />
+    <link rel="stylesheet" href="./popup.css" />
+  </head>
+  <body>
+    <main class="popup">
+      <header class="popup__header">
+        <span class="popup__brand">leetcap</span>
+        <span class="popup__status" id="status">—</span>
+      </header>
+
+      <section class="popup__body" id="body">
+        <div class="popup__row">
+          <span class="popup__label">title</span>
+          <span class="popup__value" id="title">—</span>
+        </div>
+        <div class="popup__row">
+          <span class="popup__label">difficulty</span>
+          <span class="popup__value" id="difficulty">—</span>
+        </div>
+        <div class="popup__row popup__row--block">
+          <span class="popup__label">tags</span>
+          <div class="popup__tags" id="tags"></div>
+        </div>
+        <div class="popup__row">
+          <span class="popup__label">language</span>
+          <span class="popup__value" id="language">—</span>
+        </div>
+      </section>
+
+      <footer class="popup__footer">
+        <span class="popup__hint" id="hint">submit to capture full metadata</span>
+      </footer>
+    </main>
+    <script type="module" src="./popup.ts"></script>
+  </body>
+</html>
