@@ -161,24 +161,81 @@ function resetFilenameUI(
  * Loads once per popup open: validates URL is a LeetCode problem page, pulls capture state from the tab,
  * then either renders failure/empty UI or the latest {@link CapturedData} plus filename tooling.
  */
+function setUrl(el: HTMLElement, url: string | undefined): void {
+  if (!url) {
+    setMissing(el);
+    if (el instanceof HTMLAnchorElement) el.removeAttribute("href");
+    return;
+  }
+  setValue(el, url);
+  if (el instanceof HTMLAnchorElement) el.href = url;
+}
+
+function formatRuntime(data: CapturedData): string | undefined {
+  if (data.runtimeMs === undefined) return undefined;
+  return data.runtimePercentile !== undefined
+    ? `${data.runtimeMs} ms (beats ${data.runtimePercentile}%)`
+    : `${data.runtimeMs} ms`;
+}
+
+function formatMemory(data: CapturedData): string | undefined {
+  if (data.memoryMb === undefined) return undefined;
+  return data.memoryPercentile !== undefined
+    ? `${data.memoryMb} MB (beats ${data.memoryPercentile}%)`
+    : `${data.memoryMb} MB`;
+}
+
+function formatCapturedAt(iso: string): string {
+  const parsed = new Date(iso);
+  if (Number.isNaN(parsed.getTime())) return iso;
+  return `${parsed.toLocaleDateString()} ${parsed.toLocaleTimeString([], {
+    hour: "2-digit",
+    minute: "2-digit",
+    second: "2-digit",
+  })}`;
+}
+
+function setOptional(el: HTMLElement, value: string | undefined): void {
+  if (value === undefined || value === "") setMissing(el, "not captured");
+  else setValue(el, value);
+}
+
 async function main(): Promise<void> {
   const titleEl = $("title");
   const diffEl = $("difficulty");
   const tagsEl = $("tags");
   const langEl = $("language");
+  const numberEl = $("number");
+  const urlEl = $("url");
+  const runtimeEl = $("runtime");
+  const memoryEl = $("memory");
+  const constraintsEl = $("constraints");
+  const summaryEl = $("summary");
+  const capturedAtEl = $("captured-at");
   const hintEl = $("hint");
   const conventionSelect = document.getElementById("filename-convention") as HTMLSelectElement;
   const filenameEl = $("suggested-filename");
   const copyFilenameBtn = $("copy-suggested-filename") as HTMLButtonElement;
 
-  const tab = await getActiveTab();
-  if (!tab?.url || !/^https:\/\/leetcode\.com\/problems\//.test(tab.url)) {
-    setStatus("not on a problem");
+  const resetAll = (): void => {
     setMissing(titleEl);
     setMissing(diffEl);
     renderTags(tagsEl, undefined);
     setMissing(langEl);
+    setMissing(numberEl);
+    setUrl(urlEl, undefined);
+    setMissing(runtimeEl);
+    setMissing(memoryEl);
+    setMissing(constraintsEl);
+    setMissing(summaryEl);
+    setMissing(capturedAtEl);
     resetFilenameUI(conventionSelect, filenameEl, copyFilenameBtn);
+  };
+
+  const tab = await getActiveTab();
+  if (!tab?.url || !/^https:\/\/leetcode\.com\/problems\//.test(tab.url)) {
+    setStatus("not on a problem");
+    resetAll();
     hintEl.textContent = "open a leetcode problem to use this";
     return;
   }
@@ -188,22 +245,14 @@ async function main(): Promise<void> {
 
   if (!result) {
     setStatus("no response");
-    setMissing(titleEl);
-    setMissing(diffEl);
-    renderTags(tagsEl, undefined);
-    setMissing(langEl);
-    resetFilenameUI(conventionSelect, filenameEl, copyFilenameBtn);
+    resetAll();
     hintEl.textContent = "reload the leetcode tab and try again";
     return;
   }
 
   if (result.kind === "failure") {
     setStatus("selectors failed");
-    setMissing(titleEl);
-    setMissing(diffEl);
-    renderTags(tagsEl, undefined);
-    setMissing(langEl);
-    resetFilenameUI(conventionSelect, filenameEl, copyFilenameBtn);
+    resetAll();
     hintEl.textContent = `missing: ${result.missingSelectors.join(", ")}`;
     return;
   }
@@ -213,8 +262,17 @@ async function main(): Promise<void> {
   setValue(titleEl, data.problemTitle);
   setDifficulty(diffEl, data.difficulty);
   renderTags(tagsEl, data.topics);
-  if (data.language) setValue(langEl, data.language);
-  else setMissing(langEl);
+  setOptional(langEl, data.language);
+  setOptional(numberEl, data.problemNumber?.toString());
+  setUrl(urlEl, data.problemUrl);
+  setOptional(runtimeEl, formatRuntime(data));
+  setOptional(memoryEl, formatMemory(data));
+  setOptional(
+    constraintsEl,
+    data.constraints && data.constraints.length > 0 ? data.constraints.join("\n") : undefined,
+  );
+  setOptional(summaryEl, data.summary);
+  setOptional(capturedAtEl, formatCapturedAt(data.capturedAt));
 
   setupFilenameUI(conventionSelect, filenameEl, copyFilenameBtn, data);
 
