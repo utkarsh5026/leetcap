@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "LeetCode Metadata Capture",
-  "description": "Captures metadata from accepted LeetCode submissions and copies a formatted comment block to the clipboard.",
+  "description": "Captures metadata from accepted LeetCode submissions and copies a language-specific comment block plus editor code to the clipboard.",
   "version": "0.1.0",
   "icons": {
     "16": "public/icons/16.png",
@@ -19,6 +19,12 @@
       "matches": ["https://leetcode.com/problems/*"],
       "js": ["src/content/index.ts"],
       "run_at": "document_idle"
+    },
+    {
+      "matches": ["https://leetcode.com/problems/*"],
+      "js": ["src/content/main-world.ts"],
+      "run_at": "document_idle",
+      "world": "MAIN"
     }
   ],
   "background": {

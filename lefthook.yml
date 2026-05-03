@@ -1,5 +1,7 @@
 # https://github.com/evilmartians/lefthook
 pre-commit:
   commands:
+    format:
+      run: bun run format:check
     typecheck:
       run: bun run typecheck

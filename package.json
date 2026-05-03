@@ -2,7 +2,7 @@
   "name": "leetcap",
   "version": "0.1.0",
   "packageManager": "bun@1.3.11",
-  "description": "Chrome extension that captures metadata from accepted LeetCode submissions and copies a formatted comment block to the clipboard.",
+  "description": "Chrome extension that captures metadata from accepted LeetCode submissions and copies a language-specific comment block plus editor code to the clipboard.",
   "private": true,
   "type": "module",
   "scripts": {
