@@ -30,15 +30,97 @@ function el<K extends keyof HTMLElementTagNameMap>(
   return node;
 }
 
-function fieldRow(label: string, value: string | undefined): HTMLDivElement {
-  const row = el("div", "lc-meta-capture-row");
+interface FieldRowOptions {
+  rowClassName?: string | undefined;
+  valueClassName?: string | undefined;
+  valueNode?: HTMLElement | undefined;
+}
+
+function fieldRow(
+  label: string,
+  value: string | undefined,
+  options: FieldRowOptions = {},
+): HTMLDivElement {
+  const rowClass = options.rowClassName
+    ? `lc-meta-capture-row ${options.rowClassName}`
+    : "lc-meta-capture-row";
+  const row = el("div", rowClass);
   row.appendChild(el("div", "lc-meta-capture-label", label));
-  if (value === undefined || value === "") {
-    row.appendChild(el("div", "lc-meta-capture-value lc-meta-capture-missing", "not captured"));
+  const valueClass = options.valueClassName
+    ? `lc-meta-capture-value ${options.valueClassName}`
+    : "lc-meta-capture-value";
+  const valueWrap = el("div", valueClass);
+  if (options.valueNode) {
+    valueWrap.appendChild(options.valueNode);
+  } else if (value === undefined || value === "") {
+    valueWrap.className = `${valueWrap.className} lc-meta-capture-missing`;
+    valueWrap.textContent = "not captured";
   } else {
-    row.appendChild(el("div", "lc-meta-capture-value", value));
+    valueWrap.textContent = value;
   }
+  row.appendChild(valueWrap);
   return row;
+}
+
+function difficultyBadge(
+  difficulty: CapturedData["difficulty"] | undefined,
+): HTMLElement | undefined {
+  if (!difficulty) return undefined;
+  const tone = difficulty.toLowerCase();
+  return el("span", `lc-meta-capture-badge lc-meta-capture-badge--${tone}`, difficulty);
+}
+
+function topicsNode(topics: string[] | undefined): HTMLElement | undefined {
+  if (!topics || topics.length === 0) return undefined;
+  const tags = el("div", "lc-meta-capture-tags");
+  for (const topic of topics) {
+    tags.appendChild(el("span", "lc-meta-capture-tag", topic));
+  }
+  return tags;
+}
+
+function relativeTimeLabel(input: Date): string {
+  const diffMs = Date.now() - input.getTime();
+  const past = diffMs >= 0;
+  const absMs = Math.abs(diffMs);
+  const minuteMs = 60_000;
+  const hourMs = 60 * minuteMs;
+  const dayMs = 24 * hourMs;
+  if (absMs < minuteMs) return "just now";
+  if (absMs < hourMs) {
+    const mins = Math.round(absMs / minuteMs);
+    return `${mins}m ${past ? "ago" : "from now"}`;
+  }
+  if (absMs < dayMs) {
+    const hours = Math.round(absMs / hourMs);
+    return `${hours}h ${past ? "ago" : "from now"}`;
+  }
+  const days = Math.round(absMs / dayMs);
+  return `${days}d ${past ? "ago" : "from now"}`;
+}
+
+function capturedAtNode(capturedAt: string): HTMLElement {
+  const wrap = el("div", "lc-meta-capture-captured-at");
+  const parsed = new Date(capturedAt);
+  if (Number.isNaN(parsed.getTime())) {
+    wrap.appendChild(el("div", "lc-meta-capture-captured-at-primary", capturedAt));
+    return wrap;
+  }
+  wrap.appendChild(
+    el(
+      "div",
+      "lc-meta-capture-captured-at-primary",
+      parsed.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit", second: "2-digit" }),
+    ),
+  );
+  wrap.appendChild(
+    el(
+      "div",
+      "lc-meta-capture-captured-at-secondary",
+      `${parsed.toLocaleDateString()} • ${relativeTimeLabel(parsed)}`,
+    ),
+  );
+  return wrap;
 }
 
 /** Success layout plus a copy button that awaits {@link captureCode}, writes the clipboard, and arms auto-dismiss. */
@@ -47,9 +129,21 @@ function renderOk(data: CapturedData): { body: HTMLElement; footer: HTMLElement 
 
   body.appendChild(fieldRow("Title", data.problemTitle));
   body.appendChild(fieldRow("Number", data.problemNumber?.toString()));
-  body.appendChild(fieldRow("Url", data.problemUrl));
-  body.appendChild(fieldRow("Difficulty", data.difficulty));
-  body.appendChild(fieldRow("Topics", data.topics?.join(", ")));
+  body.appendChild(
+    fieldRow("Url", data.problemUrl, { valueClassName: "lc-meta-capture-value--mono" }),
+  );
+  body.appendChild(
+    fieldRow("Difficulty", data.difficulty, {
+      rowClassName: "lc-meta-capture-row--emphasis",
+      valueNode: difficultyBadge(data.difficulty),
+    }),
+  );
+  body.appendChild(
+    fieldRow("Topics", undefined, {
+      rowClassName: "lc-meta-capture-row--emphasis",
+      valueNode: topicsNode(data.topics),
+    }),
+  );
   body.appendChild(fieldRow("Language", data.language));
   body.appendChild(
     fieldRow(
@@ -74,7 +168,12 @@ function renderOk(data: CapturedData): { body: HTMLElement; footer: HTMLElement 
     ),
   );
   body.appendChild(fieldRow("Summary", data.summary));
-  body.appendChild(fieldRow("Captured at", data.capturedAt));
+  body.appendChild(
+    fieldRow("Captured at", data.capturedAt, {
+      valueNode: capturedAtNode(data.capturedAt),
+      valueClassName: "lc-meta-capture-value--mono",
+    }),
+  );
 
   const footer = el("div", "lc-meta-capture-footer");
   const copyBtn = el("button", "lc-meta-capture-button", "Copy comment + code");

@@ -82,9 +82,19 @@
   align-items: start;
   padding: 6px 0;
   border-bottom: 1px dashed rgba(127, 127, 127, 0.18);
+  transition: background-color 120ms ease;
 }
 .lc-meta-capture-row:last-child {
   border-bottom: none;
+}
+.lc-meta-capture-row:hover {
+  background: rgba(127, 127, 127, 0.06);
+}
+.lc-meta-capture-row--emphasis {
+  background: rgba(127, 127, 127, 0.08);
+  border-radius: 8px;
+  padding: 7px 8px;
+  margin: 2px 0;
 }
 
 .lc-meta-capture-label {
@@ -99,10 +109,62 @@
   white-space: pre-wrap;
   color: inherit;
 }
+.lc-meta-capture-value--mono {
+  font-size: 12px;
+}
 
 .lc-meta-capture-missing {
   font-style: italic;
   opacity: 0.65;
+}
+
+.lc-meta-capture-badge {
+  display: inline-flex;
+  align-items: center;
+  border-radius: 999px;
+  border: 1px solid rgba(127, 127, 127, 0.3);
+  background: rgba(127, 127, 127, 0.12);
+  padding: 2px 9px;
+  font-size: 11px;
+  font-weight: 600;
+}
+.lc-meta-capture-badge--easy {
+  color: rgb(43, 196, 160);
+}
+.lc-meta-capture-badge--medium {
+  color: rgb(255, 177, 64);
+}
+.lc-meta-capture-badge--hard {
+  color: rgb(255, 96, 128);
+}
+
+.lc-meta-capture-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.lc-meta-capture-tag {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 8px;
+  border-radius: 999px;
+  border: 1px solid rgba(127, 127, 127, 0.3);
+  background: rgba(127, 127, 127, 0.12);
+  font-size: 11px;
+  line-height: 1.35;
+}
+
+.lc-meta-capture-captured-at {
+  display: grid;
+  gap: 1px;
+}
+.lc-meta-capture-captured-at-primary {
+  font-size: 12px;
+}
+.lc-meta-capture-captured-at-secondary {
+  font-size: 11px;
+  opacity: 0.72;
 }
 
 .lc-meta-capture-footer {
