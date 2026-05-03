@@ -35,6 +35,29 @@
           <span class="popup__label">language</span>
           <span class="popup__value" id="language">—</span>
         </div>
+        <div class="popup__filename-section">
+          <div class="popup__row">
+            <span class="popup__label">suggested file</span>
+            <select
+              id="filename-convention"
+              class="popup__select"
+              aria-label="Filename naming style"
+              disabled
+            ></select>
+          </div>
+          <div class="popup__filename-row">
+            <code class="popup__filename" id="suggested-filename">—</code>
+            <button
+              type="button"
+              class="popup__copy-filename"
+              id="copy-suggested-filename"
+              disabled
+              aria-label="Copy suggested filename to clipboard"
+            >
+              copy
+            </button>
+          </div>
+        </div>
       </section>
 
       <footer class="popup__footer">

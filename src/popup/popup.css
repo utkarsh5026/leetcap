@@ -98,9 +98,15 @@ body {
   font-style: italic;
 }
 
-.popup__value--easy { color: var(--easy); }
-.popup__value--medium { color: var(--medium); }
-.popup__value--hard { color: var(--hard); }
+.popup__value--easy {
+  color: var(--easy);
+}
+.popup__value--medium {
+  color: var(--medium);
+}
+.popup__value--hard {
+  color: var(--hard);
+}
 
 .popup__tags {
   display: flex;
@@ -115,6 +121,89 @@ body {
   padding: 2px 8px;
   border-radius: 999px;
   font-size: 11px;
+}
+
+.popup__filename-section {
+  padding: 8px 0 4px;
+  border-bottom: 1px dashed var(--line);
+}
+
+.popup__filename-section .popup__row {
+  border-bottom: none;
+  padding-bottom: 4px;
+}
+
+.popup__select {
+  width: 100%;
+  max-width: 100%;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  color: var(--text);
+  font: inherit;
+  font-size: 11px;
+  padding: 4px 6px;
+  border-radius: 4px;
+}
+
+.popup__select:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.popup__filename-row {
+  display: flex;
+  align-items: stretch;
+  gap: 6px;
+  margin: 0 0 4px;
+}
+
+.popup__filename-row .popup__filename {
+  flex: 1;
+  min-width: 0;
+}
+
+.popup__copy-filename {
+  flex-shrink: 0;
+  align-self: stretch;
+  padding: 6px 10px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  color: var(--accent);
+  font: inherit;
+  font-size: 11px;
+  font-weight: 500;
+  text-transform: lowercase;
+  cursor: pointer;
+}
+
+.popup__copy-filename:hover:not(:disabled) {
+  border-color: var(--accent);
+  background: color-mix(in srgb, var(--accent) 12%, var(--surface));
+}
+
+.popup__copy-filename:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.popup__filename {
+  display: block;
+  margin: 0;
+  padding: 6px 8px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  font: inherit;
+  font-size: 11px;
+  line-height: 1.45;
+  word-break: break-all;
+  color: var(--text);
+}
+
+.popup__filename.popup__value--missing {
+  font-style: italic;
+  color: var(--muted);
 }
 
 .popup__footer {
