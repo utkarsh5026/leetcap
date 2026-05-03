@@ -23,6 +23,9 @@ jobs:
       - name: Install dependencies
         run: bun install --frozen-lockfile --ignore-scripts
 
+      - name: Prettier
+        run: bun run format:check
+
       - name: Typecheck
         run: bun run typecheck
 
