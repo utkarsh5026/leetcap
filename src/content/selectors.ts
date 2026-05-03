@@ -17,17 +17,19 @@
  * They are best-effort starting points; expect to update them when the UI shifts.
  */
 
+/** One keyed entry in {@link SELECTORS}: CSS selector, human note, and last manual verification date. */
 export interface SelectorEntry {
   readonly selector: string;
   readonly note: string;
   readonly testedOn: string;
 }
 
+/** Central registry of DOM probes; keys are referenced by `capture.ts` and surfaced in logs/UI when edits are needed. */
 export const SELECTORS = {
   problemTitle: {
     selector:
-      'a[href^="/problems/"][class*="text-title"], div[data-cy="question-title"]',
-    note: "Problem title link in the description pane header — text like '42. Trapping Rain Water'.",
+      'div[class*="text-title-large"] a[href^="/problems/"], a[href^="/problems/"][class*="text-title"]',
+    note: "Problem title link in the description pane header — text like '1. Two Sum'. First branch matches today's UI (text-title-large is on the wrapper div); second branch is a fallback if LC ever moves the class onto the <a>.",
     testedOn: "2026-05-03",
   },
 
@@ -37,15 +39,9 @@ export const SELECTORS = {
     testedOn: "2026-05-03",
   },
 
-  topicsContainer: {
-    selector: 'div[class*="topic-tag"]',
-    note: "Container holding topic tag chips. Often only visible after expanding 'Topics'.",
-    testedOn: "2026-05-03",
-  },
-
   topicTag: {
     selector: 'a[href^="/tag/"]',
-    note: "Individual topic tag link.",
+    note: "Individual topic tag link. Tags live in the (collapsed-by-default) 'Topics' section but the <a> nodes are always in the DOM, so no container selector is needed.",
     testedOn: "2026-05-03",
   },
 
@@ -55,47 +51,30 @@ export const SELECTORS = {
     testedOn: "2026-05-03",
   },
 
-  submissionResult: {
-    selector: 'div[data-e2e-locator="submission-result"]',
-    note: "The whole result panel that appears after submitting.",
-    testedOn: "2026-05-03",
-  },
-
   acceptedIndicator: {
     selector: 'span[data-e2e-locator="submission-result"]',
-    note: "Element whose text reads 'Accepted' on a successful submission.",
+    note: "Span whose text reads 'Accepted' on a successful submission. Anchors the entire submission panel; capture.ts walks up from this to find the panel root and locate the metric cards.",
     testedOn: "2026-05-03",
   },
 
-  runtimeValue: {
-    selector: '[data-e2e-locator="runtime-value"]',
-    note: "Numeric runtime value (e.g. '52 ms').",
+  runtimeMetricIcon: {
+    selector: 'svg[data-icon="clock"]',
+    note: "Anchor for the Runtime card on the Accepted submission view (FontAwesome clock icon). LC stopped emitting data-e2e-locator on the value/percentile rows in the 2026 redesign, so capture.ts walks up from this icon to find the card and extracts the spans by text shape.",
     testedOn: "2026-05-03",
   },
 
-  runtimePercentile: {
-    selector: '[data-e2e-locator="runtime-percentile"]',
-    note: "Runtime percentile (e.g. 'Beats 87.30%'). Loads asynchronously after the value.",
-    testedOn: "2026-05-03",
-  },
-
-  memoryValue: {
-    selector: '[data-e2e-locator="memory-value"]',
-    note: "Numeric memory value (e.g. '16.8 MB').",
-    testedOn: "2026-05-03",
-  },
-
-  memoryPercentile: {
-    selector: '[data-e2e-locator="memory-percentile"]',
-    note: "Memory percentile (e.g. 'Beats 64.10%').",
+  memoryMetricIcon: {
+    selector: 'svg[data-icon="microchip"]',
+    note: "Anchor for the Memory card on the Accepted submission view (FontAwesome microchip icon). Same walk-up pattern as runtimeMetricIcon.",
     testedOn: "2026-05-03",
   },
 
   languageSelector: {
-    selector: 'button[aria-haspopup="dialog"][class*="text-label-2"], button[aria-haspopup="listbox"]',
-    note: "Language picker button in the editor toolbar; its text is the active language.",
+    selector: 'button[aria-haspopup="dialog"]',
+    note: "Language picker button in the editor toolbar (a Radix Dialog trigger as of 2026; its text is the active language, e.g. 'Java'). The page has other dialog-trigger buttons (share, etc.); captureLanguage() filters by a language-name regex to pick the right one.",
     testedOn: "2026-05-03",
   },
 } as const satisfies Record<string, SelectorEntry>;
 
+/** Union of registry keys (used to type `queryText` / failure diagnostics). */
 export type SelectorKey = keyof typeof SELECTORS;

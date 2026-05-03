@@ -71,10 +71,5 @@
     "typescript": "html"
   },
 
-  "cSpell.words": [
-    "leetcode",
-    "leetcap",
-    "crxjs",
-    "tsdk"
-  ]
+  "cSpell.words": ["leetcode", "leetcap", "crxjs", "tsdk"]
 }

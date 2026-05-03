@@ -1,13 +1,13 @@
 # leetcap
 
-Personal Chrome extension (MV3, TypeScript, Vite) that captures metadata from accepted LeetCode submissions and copies a formatted comment block to the clipboard. The user pastes the block into a solution file in their practice repo; a downstream analysis tool reads it.
+Personal Chrome extension (MV3, TypeScript, Vite) that captures metadata from accepted LeetCode submissions and copies a language-idiomatic comment block plus the live editor source to the clipboard. The user pastes into a solution file in their practice repo; a downstream analysis tool reads it.
 
 ## Non-negotiable design constraints
 
 These came from the original spec. Do not relax them without explicit instruction.
 
 - **No filesystem write, no GitHub API, no external server.** The only side effect is `navigator.clipboard.writeText`. The hand-paste is intentional — that is where the user exercises judgment.
-- **No code capture.** Metadata only. Code stays in the LeetCode editor.
+- **Code on copy only.** Metadata is captured from the DOM when the submission is Accepted. The solution source is read from the live Monaco editor (main-world bridge) only when the user clicks Copy, then concatenated below the comment block. Nothing is written to disk or sent to a server.
 - **No auto-copy.** Floating panel + explicit copy button, so rapid resubmissions don't clobber the clipboard.
 - **All DOM selectors live in [src/content/selectors.ts](src/content/selectors.ts).** When LeetCode redesigns, that is the only file that should need editing. Each entry has a `testedOn` date — update it when you change the selector.
 - **Capture only on Accepted.** Wrong answer / TLE / runtime error / compile error → do nothing.
@@ -19,15 +19,17 @@ These came from the original spec. Do not relax them without explicit instructio
 ## Layout
 
 ```
-manifest.json                   # MV3, action popup + content script
+manifest.json                   # MV3, two content scripts: isolated + world MAIN (Monaco bridge)
 vite.config.ts                  # @crxjs/vite-plugin
 src/
   content/
     index.ts                    # MutationObserver, SPA-nav handling, message handler
+    main-world.ts               # MAIN world: reads monaco.editor.getModels(), answers req-code events
+    code-bridge.ts              # isolated: captureCode() via CustomEvent to main-world
     selectors.ts                # ALL DOM selectors, dated
     capture.ts                  # DOM → CapturedData
     panel.ts                    # floating in-page panel
-    formatter.ts                # CapturedData → comment block string
+    formatter.ts                # CapturedData → language-idiomatic comment block; formatWithCode appends editor text
     types.ts                    # CapturedData, CaptureResult
   popup/
     index.html                  # toolbar popup (title/difficulty/tags/language)
@@ -46,7 +48,9 @@ Adding a field to the capture/output requires touching exactly three files, in t
 
 1. [src/content/types.ts](src/content/types.ts) — add the optional field to `CapturedData`.
 2. [src/content/capture.ts](src/content/capture.ts) — extract it from the DOM (use the `safe()` helper, never throw on optionals).
-3. [src/content/formatter.ts](src/content/formatter.ts) — emit a line; **skip the line entirely** when the value is `undefined` (never emit `Field: undefined`).
+3. [src/content/formatter.ts](src/content/formatter.ts) — emit a line inside `metadataContentLines`; **skip the line entirely** when the value is `undefined` (never emit `Field: undefined`).
+
+If the value comes from Monaco or page JS instead of the DOM, add a fourth touch point (e.g. [src/content/main-world.ts](src/content/main-world.ts) / [src/content/code-bridge.ts](src/content/code-bridge.ts)) and document it in the PR.
 
 If the popup should also surface the field, add a row in [src/popup/index.html](src/popup/index.html) and wire it in [src/popup/popup.ts](src/popup/popup.ts).
 
@@ -56,9 +60,9 @@ If the popup should also surface the field, add a row in [src/popup/index.html](
 - On Accepted: waits up to ~5s for percentiles, then `capture()` → `mountPanel(result)`.
 - Popup: `chrome.tabs.sendMessage(tabId, { type: "lc-meta-capture/getCurrent" })` → content script responds with the same `CaptureResult` shape. On a problem page without a submission, runtime/memory will be undefined.
 
-## Comment markers (formatter)
+## Comment style (formatter)
 
-`#` for python/ruby, `--` for sql/mysql, `//` for everything else (the default — covers js/ts/java/c/cpp/go/rust/etc.).
+Language-idiomatic wrapper around the same metadata lines: Python module `"""…"""` (falls back to `#` if the body contains both triple-quote kinds), Ruby `=begin` / `=end`, SQL/MySQL `/* … */`, Go and unknown languages `//` lines, JavaScript/TypeScript/Java/C/C++/C#/Swift/Kotlin/Scala/PHP/Dart/Rust (and other C-family-style langs in capture) use a `/** … */` block with `*` line prefixes.
 
 ## Build / verify
 

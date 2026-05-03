@@ -14,7 +14,8 @@
   border: 1px solid rgba(255, 255, 255, 0.12);
   border-radius: 8px;
   box-shadow: 0 8px 28px rgba(0, 0, 0, 0.45);
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+  font-family:
+    -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
   font-size: 13px;
   line-height: 1.4;
 }
@@ -50,7 +51,9 @@
   padding: 2px 6px;
   border-radius: 4px;
 }
-.lc-meta-capture-close:hover { background: rgba(127, 127, 127, 0.18); }
+.lc-meta-capture-close:hover {
+  background: rgba(127, 127, 127, 0.18);
+}
 
 .lc-meta-capture-body {
   padding: 10px 12px;
@@ -65,7 +68,9 @@
   padding: 4px 0;
   border-bottom: 1px dashed rgba(127, 127, 127, 0.12);
 }
-.lc-meta-capture-row:last-child { border-bottom: none; }
+.lc-meta-capture-row:last-child {
+  border-bottom: none;
+}
 
 .lc-meta-capture-label {
   color: rgba(127, 127, 127, 0.95);
@@ -100,7 +105,10 @@
   font-weight: 600;
   cursor: pointer;
 }
-.lc-meta-capture-button:disabled { opacity: 0.6; cursor: default; }
+.lc-meta-capture-button:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
 .lc-meta-capture-button.lc-meta-capture-button-secondary {
   background: rgba(127, 127, 127, 0.18);
   color: inherit;

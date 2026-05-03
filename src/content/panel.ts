@@ -1,6 +1,11 @@
-import { format } from "./formatter";
-import type { CaptureResult, CapturedData } from "./types";
 import panelCss from "../styles/panel.css?inline";
+import { captureCode } from "./code-bridge";
+import { formatWithCode } from "./formatter";
+import type { CaptureResult, CapturedData } from "./types";
+
+/**
+ * In-page floating UI after Accepted: injects scoped styles, renders capture rows, and copies `formatWithCode` output on demand.
+ */
 
 const ROOT_ID = "lc-meta-capture-root";
 const STYLE_ID = "lc-meta-capture-style";
@@ -36,6 +41,7 @@ function fieldRow(label: string, value: string | undefined): HTMLDivElement {
   return row;
 }
 
+/** Success layout plus a copy button that awaits {@link captureCode}, writes the clipboard, and arms auto-dismiss. */
 function renderOk(data: CapturedData): { body: HTMLElement; footer: HTMLElement } {
   const body = el("div", "lc-meta-capture-body");
 
@@ -71,19 +77,19 @@ function renderOk(data: CapturedData): { body: HTMLElement; footer: HTMLElement 
   body.appendChild(fieldRow("Captured at", data.capturedAt));
 
   const footer = el("div", "lc-meta-capture-footer");
-  const copyBtn = el("button", "lc-meta-capture-button", "Copy comment block");
+  const copyBtn = el("button", "lc-meta-capture-button", "Copy comment + code");
   let autoDismissTimer: number | undefined;
   copyBtn.addEventListener("click", async () => {
-    const text = format(data);
+    const code = await captureCode();
+    const text = formatWithCode(data, code);
     try {
       await navigator.clipboard.writeText(text);
-      copyBtn.textContent = "Copied";
+      copyBtn.textContent = code !== undefined ? "Copied" : "Copied (code missing)";
       copyBtn.disabled = true;
       window.setTimeout(() => {
-        copyBtn.textContent = "Copy comment block";
+        copyBtn.textContent = "Copy comment + code";
         copyBtn.disabled = false;
       }, 1500);
-      // Auto-dismiss only after a successful copy.
       if (autoDismissTimer !== undefined) window.clearTimeout(autoDismissTimer);
       autoDismissTimer = window.setTimeout(dismissPanel, 10_000);
     } catch (err) {
@@ -96,6 +102,7 @@ function renderOk(data: CapturedData): { body: HTMLElement; footer: HTMLElement 
   return { body, footer };
 }
 
+/** Error layout listing missing gates; footer intentionally has no copy action. */
 function renderFailure(missing: string[]): { body: HTMLElement; footer: HTMLElement } {
   const body = el("div", "lc-meta-capture-body");
   const err = el("div", "lc-meta-capture-error");
@@ -115,10 +122,14 @@ function renderFailure(missing: string[]): { body: HTMLElement; footer: HTMLElem
   return { body, footer };
 }
 
+/** Removes the floating root if present (idempotent). */
 export function dismissPanel(): void {
   document.getElementById(ROOT_ID)?.remove();
 }
 
+/**
+ * Ensures inline CSS, replaces any prior panel, and appends a new root for `result` (ok vs failure chrome).
+ */
 export function mountPanel(result: CaptureResult): void {
   ensureStyle();
   // Idempotent: if a panel is already up (e.g. from a prior submission on the same
@@ -136,9 +147,8 @@ export function mountPanel(result: CaptureResult): void {
   header.appendChild(closeBtn);
   root.appendChild(header);
 
-  const { body, footer } = result.kind === "ok"
-    ? renderOk(result.data)
-    : renderFailure(result.missingSelectors);
+  const { body, footer } =
+    result.kind === "ok" ? renderOk(result.data) : renderFailure(result.missingSelectors);
 
   root.appendChild(body);
   root.appendChild(footer);

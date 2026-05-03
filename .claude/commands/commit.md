@@ -15,7 +15,7 @@ Draft a **git commit message** the user will copy and paste. Do **not** run `git
 ## Message style
 
 - **Subject**: imperative mood, ≤72 characters, no trailing period (e.g. `Fix popup layout on narrow viewports`).
-- **Body** (optional): blank line after subject; explain *why* if non-obvious, breaking changes, or follow-ups. Wrap prose around 72 columns.
+- **Body** (optional): blank line after subject; explain _why_ if non-obvious, breaking changes, or follow-ups. Wrap prose around 72 columns.
 
 Prefer [Conventional Commits](https://www.conventionalcommits.org/) when it fits (`feat:`, `fix:`, `chore:`, `refactor:`, `docs:`, etc.) with an optional scope (e.g. `fix(popup): …`).
 
