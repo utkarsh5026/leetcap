@@ -2,4 +2,4 @@
 pre-commit:
   commands:
     typecheck:
-      run: npm run typecheck
+      run: bun run typecheck

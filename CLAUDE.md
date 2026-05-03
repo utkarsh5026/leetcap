@@ -63,9 +63,9 @@ If the popup should also surface the field, add a row in [src/popup/index.html](
 ## Build / verify
 
 ```sh
-npm install
-npm run typecheck      # tsc --noEmit; must be clean
-npm run build          # produces dist/
+bun install
+bun run typecheck      # tsc --noEmit; must be clean
+bun run build          # produces dist/
 ```
 
 Load `dist/` via `chrome://extensions → Developer mode → Load unpacked`. Reload after every rebuild.

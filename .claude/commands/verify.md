@@ -1,6 +1,6 @@
 ---
 description: Run typecheck and production build; report or fix failures
-allowed-tools: Bash(npm run typecheck:*), Bash(npm run build:*), Read, Grep, Glob
+allowed-tools: Bash(bun run typecheck:*), Bash(bun run build:*), Read, Grep, Glob
 argument-hint: optional focus (e.g. file or area)
 ---
 
@@ -8,7 +8,7 @@ Run **leetcap** quality checks from the repository root.
 
 ## Steps
 
-1. Run `npm run typecheck` then `npm run build`. If the first fails, still attempt the second only if useful for extra signal (otherwise stop after typecheck).
+1. Run `bun run typecheck` then `bun run build`. If the first fails, still attempt the second only if useful for extra signal (otherwise stop after typecheck).
 2. If `$ARGUMENTS` is set, prioritize issues touching that path or topic when summarizing or fixing.
 
 ## Outcome

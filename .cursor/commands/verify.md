@@ -4,7 +4,7 @@ Run **leetcap** quality checks from the repository root.
 
 ## Steps
 
-1. Run `npm run typecheck` then `npm run build`. If the first fails, still attempt the second only if useful for extra signal (otherwise stop after typecheck).
+1. Run `bun run typecheck` then `bun run build`. If the first fails, still attempt the second only if useful for extra signal (otherwise stop after typecheck).
 2. If the user passed extra text after invoking this command, prioritize issues touching that path or topic when summarizing or fixing.
 
 ## Outcome

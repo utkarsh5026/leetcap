@@ -7,8 +7,8 @@ The extension does **not** write to disk, talk to GitHub, or send data anywhere.
 ## Build
 
 ```sh
-npm install
-npm run build
+bun install
+bun run build
 ```
 
 That produces a `dist/` directory containing the loadable extension.
@@ -16,13 +16,13 @@ That produces a `dist/` directory containing the loadable extension.
 For development with HMR:
 
 ```sh
-npm run dev
+bun run dev
 ```
 
 Type-check without building:
 
 ```sh
-npm run typecheck
+bun run typecheck
 ```
 
 ## Install in Chrome
@@ -40,7 +40,7 @@ LeetCode will eventually change their DOM and the extension will start reporting
 
 1. Open `src/content/selectors.ts`. Every selector lives there with a comment describing what it targets and the date it was last verified.
 2. Update the broken selector. Update its `testedOn` date in the same edit — that comment is the running record of when the LeetCode DOM changed.
-3. Rebuild (`npm run build`) and reload the extension from `chrome://extensions`.
+3. Rebuild (`bun run build`) and reload the extension from `chrome://extensions`.
 
 If capture fails entirely, the floating panel shows which selector keys did not match — start with those.
 

@@ -14,7 +14,7 @@ Draft a **GitHub pull request** title and body the user will copy and paste. Do 
 ## Content
 
 - **Title**: ≤72 characters, imperative, Conventional-Commit style optional (e.g. `feat(content): harden submission metadata parsing`).
-- **Body**: summary of changes, **test plan** (how you verified: `npm run typecheck`, manual steps on leetcode.com, etc.), risks/follow-ups, breaking changes if any.
+- **Body**: summary of changes, **test plan** (how you verified: `bun run typecheck`, manual steps on leetcode.com, etc.), risks/follow-ups, breaking changes if any.
 
 ## Output (strict)
 
