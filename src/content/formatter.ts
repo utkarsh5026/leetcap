@@ -141,15 +141,6 @@ function metadataContentLines(data: CapturedData): string[] {
     lines.push(`Summary: ${truncateSummary(data.summary)}`);
   }
   lines.push("END METADATA");
-
-  lines.push("");
-  lines.push("REFLECTION");
-  lines.push("Time taken:");
-  lines.push("First instinct:");
-  lines.push("Changed approach:");
-  lines.push("Got stuck on:");
-  lines.push("END REFLECTION");
-
   return lines;
 }
 

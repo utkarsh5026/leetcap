@@ -12,6 +12,7 @@ const LOG_PREFIX = "[lc-meta-capture]";
 let activeObserver: MutationObserver | undefined;
 let lastHandledUrl: string | undefined;
 let inFlight = false;
+let lastAcceptedState = false;
 
 function isProblemPage(): boolean {
   return /^https:\/\/leetcode\.com\/problems\/[^/]+/.test(window.location.href);
@@ -66,17 +67,22 @@ function installObserver(): void {
   if (!document.body) return;
 
   const observer = new MutationObserver(() => {
-    if (!findAcceptedResult()) return;
-    void handleAccepted();
+    const acceptedNow = findAcceptedResult();
+    if (acceptedNow && !lastAcceptedState) {
+      void handleAccepted();
+    }
+    lastAcceptedState = acceptedNow;
   });
   observer.observe(document.body, { childList: true, subtree: true });
   activeObserver = observer;
+  lastAcceptedState = findAcceptedResult();
   console.info(LOG_PREFIX, "observer installed");
 }
 
 function teardown(): void {
   activeObserver?.disconnect();
   activeObserver = undefined;
+  lastAcceptedState = false;
 }
 
 function onUrlChange(): void {
